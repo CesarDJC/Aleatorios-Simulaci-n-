@@ -2,14 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { Random } from 'random-js';
 import { AleatorioDto } from './dto/aleatorio.dto';
 import { PRODUCTOS_DB } from './data/productos.data';
+import { ProductosService } from 'src/productos/productos.service';
 
 
 @Injectable()
 export class EscenariosService {
  
+  constructor(
+    private readonly productosService:ProductosService
+  ){
+
+  }
   private random=new Random();
   private aleatorios=[];
-  generarNumeroAleatorio(aleatorioDto:AleatorioDto){
+
+  async generarNumeroAleatorio(aleatorioDto:AleatorioDto){
     const {horas,promedioClientes, promedioProductos, ganaciaProductos}=aleatorioDto;
 
     this.aleatorios=[];
@@ -21,14 +28,24 @@ export class EscenariosService {
         clientes: clienteAleatorio
       });
     }
-    this.generarProductosAleatorios(promedioProductos, ganaciaProductos);
+   await this.generarProductosAleatorios(promedioProductos, ganaciaProductos);
 
     return this.aleatorios;
   }
 
 
-  generarProductosAleatorios(promedioProductos:number, gananciaProductos:number){
-   
+  async generarProductosAleatorios(promedioProductos:number, gananciaProductos:number){
+   const productosDB=await this.productosService.findAll();
+
+   if (!productosDB || productosDB.length === 0) {
+    for (let i = 0; i < this.aleatorios.length; i++) {
+      this.aleatorios[i].productosTotales = 0;
+      this.aleatorios[i].desglose = [];
+      this.aleatorios[i].utilidadHora = 0;
+    }
+    return; 
+  }
+
     for(let i=0; i< this.aleatorios.length; i++){
       const cantidadClientes=this.aleatorios[i].clientes;
       let acumuladoProductos=0;
@@ -43,9 +60,9 @@ export class EscenariosService {
           acumuladoProductos +=ProductosPorCliente
 
           for(let k=0; k<ProductosPorCliente; k++){
-            const productoAleatorio=this.random.pick(PRODUCTOS_DB);
-            const precioCosto=productoAleatorio.precioCosto;
-            const costoOperativo=productoAleatorio.costoOperativo ||0;
+            const productoAleatorio=this.random.pick(productosDB);
+            const precioCosto=Number(productoAleatorio.precioCosto);
+            const costoOperativo=Number(productoAleatorio.costoOperativo ||0);
             const calculo=(precioCosto+costoOperativo)*(1+gananciaProductos)
             const precioVenta=Number(calculo.toFixed(2));
             const utilidad=Number((precioVenta-(precioCosto+costoOperativo)).toFixed(2));
