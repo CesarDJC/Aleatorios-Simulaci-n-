@@ -13,6 +13,4 @@ export class EscenariosController {
   findAll(@Query() aleatorioDto:AleatorioDto) {
     return this.escenariosService.generarNumeroAleatorio(aleatorioDto);
   }
-
-  
 }
