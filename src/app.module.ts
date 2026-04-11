@@ -5,6 +5,7 @@ import { EscenariosModule } from './escenarios/escenarios.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductosModule } from './productos/productos.module';
+import { GastosModule } from './gastos/gastos.module';
 
 @Module({
   imports: [EscenariosModule,
@@ -25,11 +26,16 @@ import { ProductosModule } from './productos/productos.module';
         password:configService.get('DB_PASSWORD'),
         database:configService.get('DB_NAME'),
         autoLoadEntities:true,
-        synchronize:true
+        synchronize:true,
+        ssl:{
+          rejectUnauthorized:false
+        }
       })
     }),
 
-    ProductosModule
+    ProductosModule,
+
+    GastosModule
   ],
   controllers: [AppController],
   providers: [AppService],
