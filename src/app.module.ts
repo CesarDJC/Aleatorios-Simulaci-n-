@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductosModule } from './productos/productos.module';
 import { GastosModule } from './gastos/gastos.module';
+import { SimulacionModule } from './simulacion/simulacion.module';
 
 @Module({
   imports: [EscenariosModule,
@@ -35,7 +36,9 @@ import { GastosModule } from './gastos/gastos.module';
 
     ProductosModule,
 
-    GastosModule
+    GastosModule,
+
+    SimulacionModule
   ],
   controllers: [AppController],
   providers: [AppService],

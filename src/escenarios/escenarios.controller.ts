@@ -15,4 +15,14 @@ export class EscenariosController {
     return this.escenariosService.generarNumeroAleatorio(aleatorioDto);
     
   }
+
+  @Get('simulaciones/:numero/plana')
+  async obtenerSimulacionPlana(@Param('numero') numero: string) {
+    return await this.escenariosService.obtenerSimulacionPlana(parseInt(numero));
+  }
+
+  //  @Get('simulaciones/todas')
+  // async obtenerTodasSimulaciones() {
+  //   return await this.escenariosService.obtenerTodasSimulacionesAgrupadas();
+  // }
 }

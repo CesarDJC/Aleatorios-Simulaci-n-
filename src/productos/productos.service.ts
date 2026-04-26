@@ -50,6 +50,7 @@ export class ProductosService {
     return producto;
 
   }
+  
 
   async update(id: number, updateProductoDto: UpdateProductoDto) {
     
@@ -74,7 +75,10 @@ export class ProductosService {
       throw new NotFoundException('El producto no está en la base de datos');
       
     }
+    
     await this.productoRepository.remove(producto);
+    
+  
     return 'Producto eliminado con éxito';
   }
 

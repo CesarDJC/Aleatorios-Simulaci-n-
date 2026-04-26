@@ -26,4 +26,9 @@ export class AleatorioDto{
     @Max(0.9)
     ganaciaProductos:number;
 
+    @IsNumber()
+    @IsPositive()
+    @Type(()=>Number)
+    promedioServicio:number;
+
 }
