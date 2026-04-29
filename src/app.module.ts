@@ -28,9 +28,9 @@ import { SimulacionModule } from './simulacion/simulacion.module';
         database:configService.get('DB_NAME'),
         autoLoadEntities:true,
         synchronize:true,
-        // ssl:{
-        //   rejectUnauthorized:false
-        // }
+        ssl:{
+          rejectUnauthorized:false
+        }
       })
     }),
 
