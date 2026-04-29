@@ -15,7 +15,6 @@ export class Simulacion {
   @Column({ name: 'No_Simulación', type: 'int' })
   noSimulacion: number;
 
-
   @Column({
     name: 'Hora',
     type: 'timestamptz',
