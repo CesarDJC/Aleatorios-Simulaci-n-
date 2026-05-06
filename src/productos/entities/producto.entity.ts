@@ -14,4 +14,22 @@ export class Producto {
 
     @Column({type: 'decimal', precision:10, scale:2})
     precioCosto:number;
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

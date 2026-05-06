@@ -178,36 +178,46 @@ async generarProductosAleatorios(promedioProductos: number, gananciaProductos: n
 }
 
 async guardarSimulacionEnBD(gananciaProductos: number) {
-  const ultimaSimulacion = await this.simulacionRepository
-    .createQueryBuilder('simulacion')
-    .select('MAX(simulacion.noSimulacion)', 'max')
-    .getRawOne();
+
+  // 🔹 Obtener el último registro insertado correctamente
+  const ultimaSimulacionArray = await this.simulacionRepository.find({
+    order: { id: 'DESC' },
+    take: 1
+  });
+
+  const ultimaSimulacion = ultimaSimulacionArray[0];
 
   let nuevoNoSimulacion = 1;
-  if (ultimaSimulacion && ultimaSimulacion.max !== null) {
-    nuevoNoSimulacion = ultimaSimulacion.max === 3 ? 1 : ultimaSimulacion.max + 1;
+
+  if (ultimaSimulacion) {
+    nuevoNoSimulacion =
+      ultimaSimulacion.noSimulacion === 3
+        ? 1
+        : ultimaSimulacion.noSimulacion + 1;
   }
 
   console.log(`Guardando simulación N° ${nuevoNoSimulacion}`);
 
+  // 🔹 Guardar datos
   for (let i = 0; i < this.aleatorios.length; i++) {
     const horaActual = this.aleatorios[i];
-    const numeroHora = i + 1;  // Hora 1, 2, 3...
+    const numeroHora = i + 1;
 
     if (horaActual.desglose && horaActual.desglose.length > 0) {
       for (const cliente of horaActual.desglose) {
         for (const producto of cliente.desgloseCompra) {
+
           const registro = this.simulacionRepository.create({
             noSimulacion: nuevoNoSimulacion,
-            numeroHora: numeroHora,             
+            numeroHora: numeroHora,
             hora: new Date(),
             idProducto: producto.idProducto,
             idCliente: cliente.clienteId,
             cantidadCompra: producto.cantidad,
-            ganancia: gananciaProductos,        
-            precioVenta: producto.PrecioVenta,  
+            ganancia: gananciaProductos,
+            precioVenta: producto.PrecioVenta,
           });
-          
+
           await this.simulacionRepository.save(registro);
         }
       }
@@ -215,9 +225,9 @@ async guardarSimulacionEnBD(gananciaProductos: number) {
   }
 
   console.log(`Simulación N° ${nuevoNoSimulacion} guardada con éxito`);
+
   return nuevoNoSimulacion;
 }
-
 async obtenerSimulacionPlana(noSimulacion: number) {
   return await this.simulacionRepository.find({
     where: { noSimulacion: noSimulacion },
